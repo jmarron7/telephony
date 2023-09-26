@@ -1,4 +1,4 @@
-defmodule Subscriber.Subscriber do
+defmodule Subscriber.SubscriberTest do
   use ExUnit.Case
   alias Subscriber.Subscriber
 
@@ -16,7 +16,8 @@ defmodule Subscriber.Subscriber do
     expected = %Subscriber{
       full_name: "John Doe",
       id: "123",
-      phone_number: "1234567890"
+      phone_number: "1234567890",
+      subscriber_type: :prepaid
     }
 
     assert expected == result
