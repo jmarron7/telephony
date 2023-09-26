@@ -1,6 +1,8 @@
 defmodule Telephony.CoreTest do
   use ExUnit.Case
   alias Telephony.Core
+  alias Telephony.Core.Postpaid
+  alias Telephony.Core.Prepaid
   alias Telephony.Core.Subscriber
 
   setup do
@@ -8,7 +10,7 @@ defmodule Telephony.CoreTest do
       %Subscriber{
         full_name: "John Doe",
         phone_number: "1234567890",
-        subscriber_type: :prepaid
+        subscriber_type: %Prepaid{credits: 0, recharges: []}
       }
     ]
 
@@ -29,7 +31,7 @@ defmodule Telephony.CoreTest do
       %Subscriber{
         full_name: "John Doe",
         phone_number: "1234567890",
-        subscriber_type: :prepaid
+        subscriber_type: %Prepaid{credits: 0, recharges: []}
       }
     ]
 
@@ -40,7 +42,7 @@ defmodule Telephony.CoreTest do
     payload = %{
       full_name: "Jane Doe",
       phone_number: "0000000000",
-      subscriber_type: :prepaid
+      subscriber_type: :postpaid
     }
 
     result = Core.create_subscriber(subscribers, payload)
@@ -49,12 +51,12 @@ defmodule Telephony.CoreTest do
       %Subscriber{
         full_name: "John Doe",
         phone_number: "1234567890",
-        subscriber_type: :prepaid
+        subscriber_type: %Prepaid{credits: 0, recharges: []}
       },
       %Subscriber{
         full_name: "Jane Doe",
         phone_number: "0000000000",
-        subscriber_type: :prepaid
+        subscriber_type: %Postpaid{spent: 0}
       }
     ]
 
