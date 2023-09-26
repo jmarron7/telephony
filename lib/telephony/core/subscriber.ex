@@ -1,5 +1,5 @@
 defmodule Telephony.Core.Subscriber do
-  alias Telephony.Core.{Prepaid, Postpaid}
+  alias Telephony.Core.{Postpaid, Prepaid}
 
   defstruct full_name: nil, phone_number: nil, subscriber_type: :prepaid
 
