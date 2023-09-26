@@ -1,12 +1,11 @@
-defmodule Subscriber.SubscriberTest do
+defmodule Telephony.Core.SubscriberTest do
   use ExUnit.Case
-  alias Subscriber.Subscriber
+  alias Telephony.Core.Subscriber
 
   test "create a new subscriber" do
     # Given
     payload = %{
       full_name: "John Doe",
-      id: "123",
       phone_number: "1234567890"
     }
 
@@ -15,7 +14,6 @@ defmodule Subscriber.SubscriberTest do
     # Then
     expected = %Subscriber{
       full_name: "John Doe",
-      id: "123",
       phone_number: "1234567890",
       subscriber_type: :prepaid
     }
