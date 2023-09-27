@@ -1,5 +1,6 @@
 defmodule Telephony.Core.Prepaid do
   alias Telephony.Core.Call
+  alias Telephony.Core.Invoice
   alias Telephony.Core.Recharge
 
   defstruct credits: 0, recharges: []
@@ -41,5 +42,30 @@ defmodule Telephony.Core.Prepaid do
 
   defp has_sufficient_credits?(subscriber_type, call_duration) do
     subscriber_type.credits >= @price_per_minute * call_duration
+  end
+
+  defimpl Invoice, for: Telephony.Core.Prepaid do
+    @price_per_minute 1.45
+
+    def print(%{recharges: recharges} = subscriber_type, calls, year, month) do
+      recharges = Enum.filter(recharges, &(&1.date.year == year && &1.date.month == month))
+
+      calls =
+        Enum.reduce(calls, [], fn call, acc ->
+          if call.date.year == year && call.date.month == month do
+            call_cost = call.call_duration * @price_per_minute
+            call = %{date: call.date, call_duration: call.call_duration, call_cost: call_cost}
+
+            acc ++ [call]
+          else
+            acc
+          end
+        end)
+
+      %{
+        recharges: recharges,
+        calls: calls
+      }
+    end
   end
 end
