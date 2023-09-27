@@ -1,7 +1,7 @@
 defmodule Telephony.Core.Call do
-  defstruct time_spent: nil, date: nil
+  defstruct call_duration: nil, date: nil
 
-  def new(time_spent, date) do
-    %__MODULE__{time_spent: time_spent, date: date}
+  def new(call_duration, date) do
+    %__MODULE__{call_duration: call_duration, date: date}
   end
 end

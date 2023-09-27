@@ -56,7 +56,7 @@ defmodule Telephony.CoreTest do
       %Subscriber{
         full_name: "Jane Doe",
         phone_number: "0000000000",
-        subscriber_type: %Postpaid{spent: 0}
+        subscriber_type: %Postpaid{balance: 0}
       }
     ]
 
