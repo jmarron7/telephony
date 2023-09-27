@@ -38,7 +38,7 @@ defmodule Telephony.Core.SubscriberTest do
     expected = %Subscriber{
       full_name: "Jane Doe",
       phone_number: "1234567890",
-      subscriber_type: %Postpaid{spent: 0}
+      subscriber_type: %Postpaid{balance: 0}
     }
 
     assert expected == result
