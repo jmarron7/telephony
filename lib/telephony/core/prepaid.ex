@@ -6,11 +6,11 @@ defmodule Telephony.Core.Prepaid do
 
   @price_per_minute 1.45
 
-  def make_call(%{subscriber_type: subscriber_type} = subscriber, time_spent, date) do
-    if has_sufficient_credits?(subscriber_type, time_spent) do
+  def make_call(%{subscriber_type: subscriber_type} = subscriber, call_duration, date) do
+    if has_sufficient_credits?(subscriber_type, call_duration) do
       subscriber
-      |> update_credits(time_spent)
-      |> add_new_call(time_spent, date)
+      |> update_credits(call_duration)
+      |> add_new_call(call_duration, date)
     else
       {:error, "Subscriber does not have sufficient credits"}
     end
@@ -28,18 +28,18 @@ defmodule Telephony.Core.Prepaid do
     %{subscriber | subscriber_type: subscriber_type}
   end
 
-  defp update_credits(%{subscriber_type: subscriber_type} = subscriber, time_spent) do
-    credit_spent = @price_per_minute * time_spent
+  defp update_credits(%{subscriber_type: subscriber_type} = subscriber, call_duration) do
+    credit_spent = @price_per_minute * call_duration
     subscriber_type = %{subscriber_type | credits: subscriber_type.credits - credit_spent}
     %{subscriber | subscriber_type: subscriber_type}
   end
 
-  defp add_new_call(subscriber, time_spent, date) do
-    call = Call.new(time_spent, date)
+  defp add_new_call(subscriber, call_duration, date) do
+    call = Call.new(call_duration, date)
     %{subscriber | calls: subscriber.calls ++ [call]}
   end
 
-  defp has_sufficient_credits?(subscriber_type, time_spent) do
-    subscriber_type.credits >= @price_per_minute * time_spent
+  defp has_sufficient_credits?(subscriber_type, call_duration) do
+    subscriber_type.credits >= @price_per_minute * call_duration
   end
 end

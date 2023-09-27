@@ -22,9 +22,9 @@ defmodule Telephony.Core.PrepaidTest do
   end
 
   test "make a call", %{subscriber: subscriber} do
-    time_spent = 2
+    call_duration = 2
     date = NaiveDateTime.utc_now()
-    result = Prepaid.make_call(subscriber, time_spent, date)
+    result = Prepaid.make_call(subscriber, call_duration, date)
 
     expected = %Subscriber{
       full_name: "John Doe",
@@ -32,7 +32,7 @@ defmodule Telephony.Core.PrepaidTest do
       subscriber_type: %Prepaid{credits: 7.1, recharges: []},
       calls: [
         %Call{
-          time_spent: 2,
+          call_duration: 2,
           date: date
         }
       ]
@@ -42,9 +42,9 @@ defmodule Telephony.Core.PrepaidTest do
   end
 
   test "make a call with insufficient credits", %{subscriber_without_credits: subscriber} do
-    time_spent = 2
+    call_duration = 2
     date = NaiveDateTime.utc_now()
-    result = Prepaid.make_call(subscriber, time_spent, date)
+    result = Prepaid.make_call(subscriber, call_duration, date)
 
     expected = {:error, "Subscriber does not have sufficient credits"}
 
