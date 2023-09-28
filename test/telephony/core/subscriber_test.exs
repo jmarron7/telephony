@@ -10,13 +10,13 @@ defmodule Telephony.Core.SubscriberTest do
     postpaid_subscriber = %Subscriber{
       full_name: "Jane Doe",
       phone_number: "0000000000",
-      subscriber_type: %Postpaid{balance: 0}
+      type: %Postpaid{balance: 0}
     }
 
     prepaid_subscriber = %Subscriber{
       full_name: "John Doe",
       phone_number: "1234567890",
-      subscriber_type: %Prepaid{credits: 10, recharges: []}
+      type: %Prepaid{credits: 10, recharges: []}
     }
 
     %{postpaid_subscriber: postpaid_subscriber, prepaid_subscriber: prepaid_subscriber}
@@ -27,7 +27,7 @@ defmodule Telephony.Core.SubscriberTest do
     payload = %{
       full_name: "John Doe",
       phone_number: "1234567890",
-      subscriber_type: :prepaid
+      type: :prepaid
     }
 
     # When
@@ -36,7 +36,7 @@ defmodule Telephony.Core.SubscriberTest do
     expected = %Subscriber{
       full_name: "John Doe",
       phone_number: "1234567890",
-      subscriber_type: %Prepaid{credits: 0, recharges: []}
+      type: %Prepaid{credits: 0, recharges: []}
     }
 
     assert expected == result
@@ -47,7 +47,7 @@ defmodule Telephony.Core.SubscriberTest do
     payload = %{
       full_name: "Jane Doe",
       phone_number: "1234567890",
-      subscriber_type: :postpaid
+      type: :postpaid
     }
 
     # When
@@ -56,7 +56,7 @@ defmodule Telephony.Core.SubscriberTest do
     expected = %Subscriber{
       full_name: "Jane Doe",
       phone_number: "1234567890",
-      subscriber_type: %Postpaid{balance: 0}
+      type: %Postpaid{balance: 0}
     }
 
     assert expected == result
@@ -66,7 +66,7 @@ defmodule Telephony.Core.SubscriberTest do
     subscriber = %Subscriber{
       full_name: "John Doe",
       phone_number: "1234567890",
-      subscriber_type: %Postpaid{balance: 0}
+      type: %Postpaid{balance: 0}
     }
 
     date = NaiveDateTime.utc_now()
@@ -74,7 +74,7 @@ defmodule Telephony.Core.SubscriberTest do
     assert Subscriber.make_call(subscriber, 2, date) == %Subscriber{
              full_name: "John Doe",
              phone_number: "1234567890",
-             subscriber_type: %Postpaid{balance: 2.08},
+             type: %Postpaid{balance: 2.08},
              calls: [%Call{call_duration: 2, date: date}]
            }
   end
@@ -83,7 +83,7 @@ defmodule Telephony.Core.SubscriberTest do
     subscriber = %Subscriber{
       full_name: "John Doe",
       phone_number: "1234567890",
-      subscriber_type: %Prepaid{credits: 10, recharges: []}
+      type: %Prepaid{credits: 10, recharges: []}
     }
 
     date = NaiveDateTime.utc_now()
@@ -91,7 +91,7 @@ defmodule Telephony.Core.SubscriberTest do
     assert Subscriber.make_call(subscriber, 2, date) == %Subscriber{
              full_name: "John Doe",
              phone_number: "1234567890",
-             subscriber_type: %Prepaid{credits: 7.1, recharges: []},
+             type: %Prepaid{credits: 7.1, recharges: []},
              calls: [%Call{call_duration: 2, date: date}]
            }
   end
@@ -100,7 +100,7 @@ defmodule Telephony.Core.SubscriberTest do
     subscriber = %Subscriber{
       full_name: "John Doe",
       phone_number: "1234567890",
-      subscriber_type: %Prepaid{credits: 0, recharges: []}
+      type: %Prepaid{credits: 0, recharges: []}
     }
 
     date = NaiveDateTime.utc_now()
