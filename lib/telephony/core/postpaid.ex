@@ -21,8 +21,8 @@ defmodule Telephony.Core.Postpaid do
       }
     end
 
-    def make_call(subscriber_type, call_duration, date) do
-      subscriber_type
+    def make_call(type, call_duration, date) do
+      type
       |> update_balance(call_duration)
       |> add_call(call_duration, date)
     end
@@ -38,14 +38,14 @@ defmodule Telephony.Core.Postpaid do
       end
     end
 
-    defp update_balance(subscriber_type, call_duration) do
+    defp update_balance(type, call_duration) do
       charge = call_duration * @price_per_minute
-      %{subscriber_type | balance: subscriber_type.balance + charge}
+      %{type | balance: type.balance + charge}
     end
 
-    defp add_call(subscriber_type, call_duration, date) do
+    defp add_call(type, call_duration, date) do
       call = Call.new(call_duration, date)
-      {subscriber_type, call}
+      {type, call}
     end
   end
 end
