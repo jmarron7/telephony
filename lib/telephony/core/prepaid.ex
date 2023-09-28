@@ -63,6 +63,7 @@ defmodule Telephony.Core.Prepaid do
         end)
 
       %{
+        credits: subscriber_type.credits,
         recharges: recharges,
         calls: calls
       }
