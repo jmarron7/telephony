@@ -5,70 +5,54 @@ defmodule Telephony.Core.PrepaidTest do
   alias Telephony.Core.Recharge
 
   setup do
-    subscriber = %Telephony.Core.Subscriber{
-      full_name: "John Doe",
-      phone_number: "1234567890",
-      subscriber_type: %Prepaid{credits: 10, recharges: []}
-    }
+    prepaid_subscriber = %Prepaid{credits: 10, recharges: []}
 
-    subscriber_without_credits = %Telephony.Core.Subscriber{
-      full_name: "John Doe",
-      phone_number: "1234567890",
-      subscriber_type: %Prepaid{credits: 0, recharges: []}
-    }
+    prepaid_without_credits = %Prepaid{credits: 0, recharges: []}
 
-    %{subscriber: subscriber, subscriber_without_credits: subscriber_without_credits}
+    %{prepaid_subscriber: prepaid_subscriber, prepaid_without_credits: prepaid_without_credits}
   end
 
-  test "make a call", %{subscriber: subscriber} do
+  test "make a call", %{prepaid_subscriber: prepaid_subscriber} do
     call_duration = 2
     date = NaiveDateTime.utc_now()
-    result = Prepaid.make_call(subscriber, call_duration, date)
+    result = Subscriber.make_call(prepaid_subscriber, call_duration, date)
 
-    expected = %Telephony.Core.Subscriber{
-      full_name: "John Doe",
-      phone_number: "1234567890",
-      subscriber_type: %Prepaid{credits: 7.1, recharges: []},
-      calls: [
-        %Call{
-          call_duration: 2,
-          date: date
-        }
-      ]
-    }
+    expected =
+      {%Prepaid{credits: 7.1, recharges: []},
+       %Call{
+         call_duration: 2,
+         date: date
+       }}
 
     assert expected == result
   end
 
-  test "make a call with insufficient credits", %{subscriber_without_credits: subscriber} do
+  test "make a call with insufficient credits", %{
+    prepaid_without_credits: prepaid_without_credits
+  } do
     call_duration = 2
     date = NaiveDateTime.utc_now()
-    result = Prepaid.make_call(subscriber, call_duration, date)
+    result = Subscriber.make_call(prepaid_without_credits, call_duration, date)
 
     expected = {:error, "Subscriber does not have sufficient credits"}
 
     assert expected == result
   end
 
-  test "perform a recharge", %{subscriber: subscriber} do
+  test "perform a recharge", %{prepaid_subscriber: prepaid_subscriber} do
     amount = 100
     date = NaiveDateTime.utc_now()
 
-    result = Prepaid.recharge(subscriber, amount, date)
+    result = Subscriber.recharge(prepaid_subscriber, amount, date)
 
-    expected = %Telephony.Core.Subscriber{
-      full_name: "John Doe",
-      phone_number: "1234567890",
-      subscriber_type: %Prepaid{
-        credits: 110,
-        recharges: [
-          %Recharge{
-            amount: 100,
-            date: date
-          }
-        ]
-      },
-      calls: []
+    expected = %Prepaid{
+      credits: 110,
+      recharges: [
+        %Recharge{
+          amount: 100,
+          date: date
+        }
+      ]
     }
 
     assert expected == result
