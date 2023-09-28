@@ -23,8 +23,8 @@ defmodule Telephony.Core.Postpaid do
     %{subscriber | calls: subscriber.calls ++ [call]}
   end
 
-  defimpl Invoice, for: Telephony.Core.Postpaid do
-    def print(_postpaid, calls, year, month) do
+  defimpl Subscriber, for: Telephony.Core.Postpaid do
+    def print_invoice(_postpaid, calls, year, month) do
       calls =
         Enum.reduce(calls, [], fn call, acc ->
           if call.date.year == year and call.date.month == month do

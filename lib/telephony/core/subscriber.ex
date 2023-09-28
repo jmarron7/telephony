@@ -1,3 +1,7 @@
+defprotocol Subscriber do
+  def print_invoice(subscriber_type, calls, year, month)
+end
+
 defmodule Telephony.Core.Subscriber do
   alias Telephony.Core.{Postpaid, Prepaid}
 

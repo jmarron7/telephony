@@ -1,19 +1,17 @@
 defmodule Telephony.Core.PrepaidTest do
   use ExUnit.Case
   alias Telephony.Core.Call
-  alias Telephony.Core.Invoice
   alias Telephony.Core.Prepaid
   alias Telephony.Core.Recharge
-  alias Telephony.Core.Subscriber
 
   setup do
-    subscriber = %Subscriber{
+    subscriber = %Telephony.Core.Subscriber{
       full_name: "John Doe",
       phone_number: "1234567890",
       subscriber_type: %Prepaid{credits: 10, recharges: []}
     }
 
-    subscriber_without_credits = %Subscriber{
+    subscriber_without_credits = %Telephony.Core.Subscriber{
       full_name: "John Doe",
       phone_number: "1234567890",
       subscriber_type: %Prepaid{credits: 0, recharges: []}
@@ -27,7 +25,7 @@ defmodule Telephony.Core.PrepaidTest do
     date = NaiveDateTime.utc_now()
     result = Prepaid.make_call(subscriber, call_duration, date)
 
-    expected = %Subscriber{
+    expected = %Telephony.Core.Subscriber{
       full_name: "John Doe",
       phone_number: "1234567890",
       subscriber_type: %Prepaid{credits: 7.1, recharges: []},
@@ -58,7 +56,7 @@ defmodule Telephony.Core.PrepaidTest do
 
     result = Prepaid.recharge(subscriber, amount, date)
 
-    expected = %Subscriber{
+    expected = %Telephony.Core.Subscriber{
       full_name: "John Doe",
       phone_number: "1234567890",
       subscriber_type: %Prepaid{
@@ -80,7 +78,7 @@ defmodule Telephony.Core.PrepaidTest do
     date = ~D[2023-07-06]
     prev_month = ~D[2023-06-09]
 
-    subscriber = %Subscriber{
+    subscriber = %Telephony.Core.Subscriber{
       full_name: "John Doe",
       phone_number: "1234567890",
       subscriber_type: %Prepaid{
@@ -119,7 +117,7 @@ defmodule Telephony.Core.PrepaidTest do
     subscriber_type = subscriber.subscriber_type
     calls = subscriber.calls
 
-    assert Invoice.print(subscriber_type, calls, 2023, 06) == %{
+    assert Subscriber.print_invoice(subscriber_type, calls, 2023, 06) == %{
              credits: 253.6,
              calls: [
                %{
