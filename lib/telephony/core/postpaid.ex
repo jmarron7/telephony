@@ -1,41 +1,17 @@
 defmodule Telephony.Core.Postpaid do
   alias Telephony.Core.Call
-  alias Telephony.Core.Invoice
 
   defstruct balance: 0
 
-  @price_per_minute 1.04
+  defimpl Subscriber, for: Telephony.Core.Postpaid do
+    @price_per_minute 1.04
 
-  def make_call(subscriber, call_duration, date) do
-    subscriber
-    |> update_balance(call_duration)
-    |> add_call(call_duration, date)
-  end
+    def recharge(_, _, _) do
+      {:error, "Recharges can only be applied to prepaid accounts"}
+    end
 
-  defp update_balance(%{subscriber_type: subscriber_type} = subscriber, call_duration) do
-    charge = call_duration * @price_per_minute
-    subscriber_type = %{subscriber_type | balance: subscriber_type.balance + charge}
-    %{subscriber | subscriber_type: subscriber_type}
-  end
-
-  defp add_call(subscriber, call_duration, date) do
-    call = Call.new(call_duration, date)
-    %{subscriber | calls: subscriber.calls ++ [call]}
-  end
-
-  defimpl Invoice, for: Telephony.Core.Postpaid do
-    def print(_postpaid, calls, year, month) do
-      calls =
-        Enum.reduce(calls, [], fn call, acc ->
-          if call.date.year == year and call.date.month == month do
-            call_cost = call.call_duration * 1.04
-            call = %{date: call.date, call_duration: call.call_duration, call_cost: call_cost}
-
-            acc ++ [call]
-          else
-            acc
-          end
-        end)
+    def print_invoice(_postpaid, calls, year, month) do
+      calls = Enum.reduce(calls, [], &filter_calls(&1, &2, year, month))
 
       amount_due = Enum.reduce(calls, 0, &(&1.call_cost + &2))
 
@@ -43,6 +19,33 @@ defmodule Telephony.Core.Postpaid do
         amount_due: amount_due,
         calls: calls
       }
+    end
+
+    def make_call(subscriber_type, call_duration, date) do
+      subscriber_type
+      |> update_balance(call_duration)
+      |> add_call(call_duration, date)
+    end
+
+    defp filter_calls(call, acc, year, month) do
+      if call.date.year == year and call.date.month == month do
+        call_cost = call.call_duration * 1.04
+        call = %{date: call.date, call_duration: call.call_duration, call_cost: call_cost}
+
+        acc ++ [call]
+      else
+        acc
+      end
+    end
+
+    defp update_balance(subscriber_type, call_duration) do
+      charge = call_duration * @price_per_minute
+      %{subscriber_type | balance: subscriber_type.balance + charge}
+    end
+
+    defp add_call(subscriber_type, call_duration, date) do
+      call = Call.new(call_duration, date)
+      {subscriber_type, call}
     end
   end
 end
