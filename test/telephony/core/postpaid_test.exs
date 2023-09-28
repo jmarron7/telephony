@@ -1,9 +1,9 @@
 defmodule Telephony.Core.PostpaidTest do
   use ExUnit.Case
   alias Telephony.Core.Call
+  alias Telephony.Core.Invoice
   alias Telephony.Core.Postpaid
   alias Telephony.Core.Subscriber
-  alias Telephony.Core.Invoice
 
   setup do
     subscriber = %Subscriber{
